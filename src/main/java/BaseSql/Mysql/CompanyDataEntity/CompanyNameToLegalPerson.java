@@ -9,6 +9,7 @@ public class CompanyNameToLegalPerson{
     private String legal_person_name;
     private String base;
 
+
     public String getLegal_person_id() {
         return legal_person_id;
     }

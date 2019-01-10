@@ -1,11 +1,15 @@
 package BaseSql.Mysql.CompanyDataEntity;
 
-public class Company {
+import java.util.ArrayList;
+import java.util.List;
+
+public class PersonInCompany {
     private String base;
     private String estiblish_time;
     private String reg_capital;
     private String reg_status;
     private String name;
+    private List<String> jobs = new ArrayList<String>();
 
     public String getBase() {
         return base;
@@ -45,5 +49,13 @@ public class Company {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<String> getJobs() {
+        return jobs;
+    }
+
+    public void setJobs(List<String> jobs) {
+        this.jobs = jobs;
     }
 }

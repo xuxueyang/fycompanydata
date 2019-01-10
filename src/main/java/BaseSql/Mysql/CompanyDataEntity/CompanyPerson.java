@@ -9,8 +9,9 @@ public class CompanyPerson {
     private String id;
     private String name;
     private String investor_type;
+    private String investor_id;
 
-    private List<Company> companyList = new ArrayList<Company>();
+    private List<PersonInCompany> companyList = new ArrayList<PersonInCompany>();
 
     public String getId() {
         return id;
@@ -37,11 +38,19 @@ public class CompanyPerson {
         this.investor_type = investor_type;
     }
 
-    public List<Company> getCompanyList() {
+    public List<PersonInCompany> getCompanyList() {
         return companyList;
     }
 
-    public void setCompanyList(List<Company> companyList) {
+    public void setCompanyList(List<PersonInCompany> companyList) {
         this.companyList = companyList;
+    }
+
+    public String getInvestor_id() {
+        return investor_id;
+    }
+
+    public void setInvestor_id(String investor_id) {
+        this.investor_id = investor_id;
     }
 }
