@@ -11,10 +11,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args){
@@ -51,6 +48,10 @@ public class Main {
         //        被查询公司	企业法人/投资人	公司	地区（省份缩写）	成立时间	注册资本	状态
 
         //TODO 一些HashMap，缓存查出来的数据，这样可要避免一些人已经查出公司
+        // 缓存企业ID：对应的企业
+        Map<String ,List<CompanyNameToLegalPerson>> namepersonListMap = new HashMap<String ,List<CompanyNameToLegalPerson>>();
+        Map<String,CompanyPerson> idCompanyPerson = new HashMap<String, CompanyPerson>();
+
 
         for(ArrayList<Object> arrayList:arrayLists){
             String  companyName = arrayList.get(0).toString().trim();
@@ -74,17 +75,27 @@ public class Main {
 
 //            ID	公司	地区（省份缩写）	成立时间	注册资本	状态
             try {
-                ResultSet resultSet = execute.executeQuery(companyNameToLegalPerson);
-                List<CompanyNameToLegalPerson> entityList = new ArrayList<CompanyNameToLegalPerson>();
+                List<CompanyNameToLegalPerson> entityList = null;
+                ResultSet resultSet = null;
+                if(namepersonListMap.containsKey(companyName)){
+                    entityList = namepersonListMap.get(companyName);
+                }else{
+                    resultSet = execute.executeQuery(companyNameToLegalPerson);
+                    entityList = new ArrayList<CompanyNameToLegalPerson>();
 
-                while (resultSet.next()){
-                    CompanyNameToLegalPerson entity1 = new CompanyNameToLegalPerson();
-                    entity1.setId(resultSet.getString("id"));
-                    entity1.setBase(resultSet.getString("base"));
-                    entity1.setLegal_person_id(resultSet.getString("legal_person_id"));
-                    entity1.setLegal_person_name(resultSet.getString("legal_person_name"));
-                    entityList.add(entity1);
+                    while (resultSet.next()){
+                        CompanyNameToLegalPerson entity1 = new CompanyNameToLegalPerson();
+                        entity1.setId(resultSet.getString("id"));
+                        entity1.setBase(resultSet.getString("base"));
+                        entity1.setLegal_person_id(resultSet.getString("legal_person_id"));
+                        entity1.setLegal_person_name(resultSet.getString("legal_person_name"));
+                        entityList.add(entity1);
+                    }
+                    namepersonListMap.put(companyName,entityList);
+
                 }
+
+
                 for(CompanyNameToLegalPerson entity1:entityList){
                     HSSFSheet sheet = null;
                     try {
@@ -112,27 +123,13 @@ public class Main {
                         companyPerson1.setName(resultSet.getString("name"));
                         companyPerson1.setInvestor_type(resultSet.getString("investor_type"));
                     }
-                    row = sheet.createRow(rowIndex++);
-                    row.createCell(0).setCellValue("企业投资人");
-                    for(int cell=1;cell<companyPersonList.size();cell++){
-                        row.createCell(cell).setCellValue(companyPersonList.get(cell-1).getName());
-                    }
 
                     //根据投资人，依次找下属的公司，和所在公司的职位
                     for(int cell=0;cell<companyPersonList.size();cell++){
-                        row = sheet.createRow(rowIndex++);
-                        row.createCell(0).setCellValue(companyPersonList.get(cell).getName());
-                        row = sheet.createRow(rowIndex++);
-                        row.createCell(0).setCellValue("公司");
-                        row.createCell(1).setCellValue("地区");
-                        row.createCell(2).setCellValue("成立时间");
-                        row.createCell(3).setCellValue("注册资本");
-                        row.createCell(4).setCellValue("状态");
-
 
                         String getCompanysByPerson = "SELECT t.`name`,t.base,t.estiblish_time,t.reg_capital,t.reg_status FROM company t "
                                 +"LEFT JOIN company_investor c on t.id = c.company_id LEFT JOIN company_category b on t.id = b.company_id where "
-                                +"c.investor_id="+ companyPersonList.get(cell).getId() +"  AND c.investor_type='"+ companyPersonList.get(cell).getInvestor_type() +"' and t.base='"+ entity1.getBase() +"'   LIMIT 100;";
+                                +"c.investor_id="+ companyPersonList.get(cell).getId() +"  AND c.investor_type='"+ companyPersonList.get(cell).getInvestor_type() +"'    LIMIT 100;";
                         resultSet = execute.executeQuery(getCompanysByPerson);
                         while (resultSet.next()){
                             Company company = new Company();
@@ -141,6 +138,7 @@ public class Main {
                             company.setEstiblish_time(resultSet.getString("estiblish_time"));
                             company.setReg_capital(resultSet.getString("reg_capital"));
                             company.setReg_status(resultSet.getString("reg_status"));
+                            companyPersonList.get(cell).getCompanyList().add(company);
                         }
 
 
