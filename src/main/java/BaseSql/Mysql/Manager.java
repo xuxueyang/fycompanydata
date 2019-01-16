@@ -4,7 +4,7 @@ import java.sql.*;
 
 public class Manager {
     private  Connection conn = null;
-    private Statement statement;
+//    private Statement statement;
 //    PreparedStatement ps = null;
 //    ResultSet rs = null;
 
@@ -13,7 +13,7 @@ public class Manager {
         
         // 获取数据库链接
         conn = DriverManager.getConnection(url, username, password);
-        statement = conn.createStatement();
+//        statement = conn.createStatement();
 //        String sql = "select * from user";
         // 预执行查询
     }
@@ -25,8 +25,7 @@ public class Manager {
         }
     }
     public Statement createStatement() throws SQLException {
-
-        return statement;
+        return conn.createStatement();
     }
 //    public PreparedStatement execute(String sql) throws SQLException{
 //        PreparedStatement ps = conn.prepareStatement(sql);
