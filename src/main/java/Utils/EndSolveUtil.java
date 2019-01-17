@@ -23,8 +23,8 @@ public class EndSolveUtil {
 //        addRZ("D:\\projects\\companydata\\tmp0.1.2.xls","D:\\projects\\companydata\\tmp0.1.3.xls");
 //          qc("D:\\projects\\companydata\\tmp0.1.3.xls","D:\\projects\\companydata\\tmp0.1.4.xls");
 //        isFR("D:\\projects\\companydata\\tmp0.1.4.xls","D:\\projects\\companydata\\tmp0.1.5.xls");
-          qc("D:\\projects\\companydata\\tmp0.1.5.xls","D:\\projects\\companydata\\tmp0.1.6..xls");
-
+//          qc("D:\\projects\\companydata\\tmp0.1.5.xls","D:\\projects\\companydata\\tmp0.1.6.xls");
+//            qcAC("D:\\projects\\companydata\\tmp0.1.6.xls","D:\\projects\\companydata\\tmp0.1.7..xls");
     }
 
     //TODO 添加职责
@@ -115,7 +115,33 @@ public class EndSolveUtil {
         }
         ExcelUtil.writeSteamToExcel(hs,path2);
     }
+    //ABC作为key，但是AC不能相同
+    private static void qcAC(String path1,String path2){
+        ArrayList<ArrayList<Object>> arrayLists = ExcelUtil.readExcel(new File(path1));
 
+        List<String> nameList = new ArrayList<>();
+        HSSFWorkbook hs = new HSSFWorkbook();
+        HSSFSheet sheet1 = hs.createSheet("原");
+        int index =0;
+        for(int i=0;i<arrayLists.size();i++){
+            ArrayList<Object> arrayList = arrayLists.get(i);
+            String name1=arrayList.get(0).toString().trim();
+            String name2=arrayList.get(1).toString().trim();
+            String name3=arrayList.get(2).toString().trim();
+            if(nameList.contains(name1+name2+name3)){
+                //不做处理
+            }else{
+                if(!name1.equals(name3)){
+                    nameList.add(name1+name2+name3);
+                    HSSFRow row = sheet1.createRow(index++);
+                    for(int j=0;j<arrayList.size();j++){
+                        row.createCell(j).setCellValue(arrayList.get(j).toString().trim());
+                    }
+                }
+            }
+        }
+        ExcelUtil.writeSteamToExcel(hs,path2);
+    }
     //TODO 去重
     private static void qc(String path1,String path2){
         ArrayList<ArrayList<Object>> arrayLists = ExcelUtil.readExcel(new File(path1));
