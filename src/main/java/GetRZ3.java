@@ -49,21 +49,6 @@ public class GetRZ3 {
         ArrayList<ArrayList<Object>> excels2 = ExcelUtil.readExcel(new File("D:\\projects\\companydata\\one3.xls")); //new ArrayList<ArrayList<ArrayList<Object>>>();
 //        excels.add(excels1);
         excels.add(excels2);
-//        for(int i=1;i<=6;i++){
-//            String inpath = companyPropertiesUtil.getProperty("data.file."+i);
-//            //查询,所有的名字
-//            File dir = new File(inpath);
-//            File[] files = dir.listFiles();
-//            if(files!=null){
-//                for(int k=0;k<files.length;k++){
-//                    File file = files[k];
-//                    if(file.getName().endsWith("xls")){
-//                        ArrayList<ArrayList<Object>> nameLists = ExcelUtil.readExcel(file);
-//                        excels.add(nameLists);
-//                    }
-//                }
-//            }
-//        }
         //写入
         HSSFWorkbook hs = new HSSFWorkbook();
         HSSFSheet sheet1 = hs.createSheet("sheet1");

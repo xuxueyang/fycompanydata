@@ -1,4 +1,5 @@
 import Utils.ExcelUtil;
+import Utils.GetRZUtil;
 import Utils.PropertiesUtil;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -25,7 +26,7 @@ public class DC {
             if(files!=null){
                 for(int k=0;k<files.length;k++){
                     File file = files[k];
-                    if(file.getName().endsWith("xls")){
+                    if(file.getName().endsWith("xls")||file.getName().endsWith("xlsx")){
                         ArrayList<ArrayList<Object>> nameLists = ExcelUtil.readExcel(file);
                         excels.add(nameLists);
                     }
@@ -42,6 +43,9 @@ public class DC {
             for(int tmp=1;tmp<arrayLists.size();tmp++){
 
                 ArrayList<Object> arrayList = arrayLists.get(tmp);
+//                if(arrayList.size()>=4&&arrayList.get(3).toString().contains("4")){
+//                    int kkk=0;
+//                }
                 if(!check(arrayList)){
                     continue;
                 }
@@ -65,6 +69,8 @@ public class DC {
             HSSFRow row = sheet11.createRow(index++);
             row.createCell(0).setCellValue(str.get(0));
             row.createCell(1).setCellValue(str.get(1));
+            row.createCell(2).setCellValue(str.get(2));
+            row.createCell(3).setCellValue(str.get(3));
         }
 
         ExcelUtil.writeSteamToExcel(wb,"D:\\\\projects\\\\companydata\\\\one_count200.xls");
@@ -73,6 +79,7 @@ public class DC {
     private static String name = "";
     private static String companyName = "";
     private static int count = 0;
+    private static boolean hasRZ = false;
     private static List<ArrayList<String>> companyNameList = new ArrayList<ArrayList<String>>();
     private static boolean check(ArrayList<Object> arrayList) {
         if(arrayList.size()<5){
@@ -83,15 +90,30 @@ public class DC {
 //        }
         if(name.equals(arrayList.get(1).toString().trim())){
             count++;
+            //如果有任职，记录一下
+            String company = arrayList.get(2).toString().trim();
+            String people = arrayList.get(1).toString().trim();
+            if(arrayList.size()>=8&&(!"".equals(arrayList.get(7).toString().trim())|| !"".equals(GetRZUtil.getRZ(company,people)))){
+                hasRZ=true;
+            }
         }else{
 //            if(count==60||count==59||count==61||count==99||count==100||count==101||count==200||count==201||count==199||count==40){
-            if(count==60||count==59||count==61||count==40||count>=59){
+            if(count==60||count==59||count==61||count==40||count>=10){
                 //TODO 说明是限制了的企业
                 ArrayList<String> list = new ArrayList<String>();
+
                 list.add(companyName);
                 list.add(name);
+                if(hasRZ&&count>=10){
+                    list.add("1");
+                }else{
+                    list.add("0");
+
+                }
+                list.add(""+count);
                 companyNameList.add(list);
             }
+
             name = arrayList.get(1).toString().trim();
             companyName = arrayList.get(0).toString().trim();
             count=1;
