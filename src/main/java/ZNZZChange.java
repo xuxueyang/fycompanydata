@@ -42,6 +42,10 @@ public class ZNZZChange {
                     int k=1;
                 }else{
                    //System.out.println(sql);
+                    //更新一下产品表
+                    String sqlservice = "UPDATE t_service_resource, t_enterprise SET t_service_resource.service_type = '"+ classC.toString() +"' " +
+                            "WHERE t_enterprise.name = '"+ name +"' AND t_service_resource.enterprise_id = t_enterprise.id;";
+                    System.out.println(sqlservice);
                 }
                 //变化案例
                 StringBuffer industry = new StringBuffer();
@@ -71,7 +75,7 @@ public class ZNZZChange {
                         }else{
                             String sqlindustry = "UPDATE t_case_maintain, t_enterprise SET t_case_maintain.industry_type = '"+ tmpBuffer.toString() +"' " +
                                     "WHERE t_enterprise.name = '"+ name +"' AND t_case_maintain.facilitator_id = t_enterprise.id;";
-                            System.out.println(sqlindustry);
+                            //System.out.println(sqlindustry);
                         }
 
                     }
@@ -79,8 +83,10 @@ public class ZNZZChange {
                     //System.out.println(sql);
                     String sqlindustry = "UPDATE t_case_maintain, t_enterprise SET t_case_maintain.industry_type = '"+ industry.toString() +"' " +
                             "WHERE t_enterprise.name = '"+ name +"' AND t_case_maintain.facilitator_id = t_enterprise.id;";
-                    System.out.println(sqlindustry);
+                    //System.out.println(sqlindustry);
                 }
+
+
 
             }
         }
